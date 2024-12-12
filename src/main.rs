@@ -1,9 +1,10 @@
 use image::{load_from_memory, DynamicImage};
 use image_webp::WebPEncoder;
-use std::io::Cursor;
+use std::fs::File;
+use std::io::{Cursor, Write};
 
 fn main() -> () {
-    let input_path = "assets/fuwamoco_fuwawa_mococo_abyssbard_official-1024x577.jpg";
+    let input_path = "assets/スクリーンショット 2024-12-13 8.49.43.png";
     let output_path = "assets/fuwamoco_fuwawa_mococo_abyssbard_official.webp";
 
     // 画像の読み込み
@@ -28,5 +29,10 @@ fn main() -> () {
     let mut output_picture = Vec::new();
     let encoder: WebPEncoder<Cursor<&mut _>> = WebPEncoder::new(Cursor::new(&mut output_picture));
     encoder.encode(&data, width, height, color_type).unwrap();
-    println!("{:?}", output_picture);
+
+    // エンコード結果をファイルに保存
+    let mut output_file = File::create(output_path).unwrap();
+    output_file.write_all(&output_picture).unwrap();
+
+    println!("画像がWebP形式で保存されました: {}", output_path);
 }
