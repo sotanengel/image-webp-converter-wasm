@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,12 +32,19 @@
         background-color: #ccc;
         cursor: not-allowed;
       }
+      #fileInput {
+        display: block;
+        margin: 20px auto;
+      }
     </style>
+    <script src="./js/jszip.min.js"></script>
+    <script type="module" src="./script.js"></script>
   </head>
   <body>
     <h1 style="text-align: center">PNG画像をWebpに変換します</h1>
-    <div id="dropZone">画像をここにドラッグ＆ドロップしてください</div>
+
+    <!-- ファイル選択ボタン -->
+    <input type="file" id="fileInput" multiple accept="image/png" />
     <button id="convertBtn" disabled>変換&保存</button>
-    <script type="module" src="./script.js"></script>
   </body>
 </html>

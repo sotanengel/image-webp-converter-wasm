@@ -2,76 +2,76 @@ import init, {
   convert_image_to_webp,
 } from "./pkg/image_webp_converter_wasm.js";
 
-const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
 const convertBtn = document.getElementById("convertBtn");
 
-let imageData = null;
-let imageName = "";
+let images = []; // 複数画像を格納
 
 // WASMの初期化
 init().then(() => {
   console.log("WASM Module Loaded");
 });
 
-// ドロップイベントの処理
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.style.backgroundColor = "#e1eaff"; // ドラッグ中の色
-});
-
-dropZone.addEventListener("dragleave", () => {
-  dropZone.style.backgroundColor = "";
-});
-
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropZone.style.backgroundColor = "";
-
-  const file = e.dataTransfer.files[0];
-  if (file) {
-    handleFile(file);
+// ファイル選択イベントの処理
+fileInput.addEventListener("change", (e) => {
+  const files = e.target.files;
+  if (files.length > 0) {
+    handleFiles(files);
   }
 });
 
-// ファイル処理
-function handleFile(file) {
-  if (!file.type.startsWith("image/")) {
-    alert("Please upload a valid image file.");
+// 複数のファイルを処理する
+function handleFiles(files) {
+  images = []; // 画像のリストを初期化
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload only image files.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageData = new Uint8Array(e.target.result);
+      images.push({ data: imageData, name: file.name });
+      if (images.length === files.length) {
+        convertBtn.disabled = false; // すべてのファイルが読み込まれたら変換ボタンを有効化
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+// 変換ボタンがクリックされた時
+convertBtn.addEventListener("click", async () => {
+  if (images.length === 0) {
+    alert("No images loaded.");
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    imageData = new Uint8Array(e.target.result);
-    imageName = file.name; // 元々の画像名を保存
-    convertBtn.disabled = false; // 変換ボタンを有効化
-  };
-  reader.readAsArrayBuffer(file);
-}
+  const zip = new JSZip(); // 新しいZIPを作成
 
-// ボタンがクリックされた時
-convertBtn.addEventListener("click", () => {
-  if (!imageData) {
-    alert("No image loaded.");
-    return;
+  for (const image of images) {
+    const { data, name } = image;
+    const webpData = convert_image_to_webp(data);
+
+    const fileNameWithoutExt = name.split(".").slice(0, -1).join(".");
+    const webpFileName = `${fileNameWithoutExt}.webp`;
+
+    // ZIPにWebPファイルを追加
+    zip.file(webpFileName, webpData);
   }
 
-  // WASMを使ってWebPに変換
-  const webpData = convert_image_to_webp(imageData);
-  const fileNameWithoutExt = imageName.split(".").slice(0, -1).join("."); // 拡張子を取り除いた元のファイル名
-  const webpFileName = `${fileNameWithoutExt}.webp`; // 拡張子を .webp に変更
-  downloadFile(webpData, webpFileName);
+  // ZIPファイルを作成してダウンロード
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(content);
+    a.href = url;
+    a.download = "converted_images.zip";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 });
-
-// ファイルのダウンロード
-function downloadFile(data, filename) {
-  const blob = new Blob([data], { type: "image/webp" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
