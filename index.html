@@ -25,13 +25,36 @@
       content="画像をSEO対策に最適な「WebP形式」に変更します。"
     />
     <meta property="og:site_name" content="【SEO対策】画像WebP変換" />
-    <meta property="og:image" content="img/og-image-top.png" />
+    <meta property="og:image" content="img/og-image-top.webp" />
   </head>
   <body>
-    <h1 style="text-align: center">PNG画像をWebpに変換します</h1>
+    <header>
+      <meta charset="utf-8" />
+      
+      <h1>【SEO対策】画像WebP変換</h1>
+
+      <a
+        href="https://github.com/sotanengel/image-webp-converter-wasm"
+        target="_blank"
+        style="
+          position: absolute;
+          top: 50%;
+          right: 20px;
+          transform: translateY(-50%);
+        "
+      >
+        <img
+          src="img/github-mark.webp"
+          alt="GitHub"
+          style="width: 40px; height: 40px"
+        />
+      </a>
+    </header>
 
     <!-- ファイル選択ボタン -->
     <input type="file" id="fileInput" multiple accept="image/png" />
     <button id="convertBtn" disabled>変換&保存</button>
+  </div>
+    <div id="footer-placeholder"></div>
   </body>
 </html>

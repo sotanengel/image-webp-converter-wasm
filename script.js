@@ -75,3 +75,18 @@ convertBtn.addEventListener("click", async () => {
     URL.revokeObjectURL(url);
   });
 });
+
+// フッターを読み込む関数
+function loadFooter() {
+  fetch("footer.html")
+    .then((response) => response.text())
+    .then((data) => {
+      document.getElementById("footer-placeholder").innerHTML = data;
+    })
+    .catch((error) => console.error("Error loading footer:", error));
+}
+
+// ページが読み込まれたときにフッターを読み込む
+document.addEventListener("DOMContentLoaded", () => {
+  loadFooter();
+});
