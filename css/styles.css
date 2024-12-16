@@ -1,0 +1,46 @@
+header {
+  background-color: #0056b3;
+  color: white;
+  padding: 15px 20px;
+  position: relative; /* 相対位置指定を追加 */
+  margin-bottom: 20px;
+}
+
+header h1 {
+  text-align: center;
+  margin: 0;
+}
+
+footer {
+  background-color: #0056b3;
+  color: white;
+  padding: 15px 0;
+  width: 100%;
+  text-align: center;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+#convertBtn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+#fileInput {
+  display: block;
+  margin: 20px auto;
+}
